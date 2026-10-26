@@ -64,6 +64,15 @@ jobs:
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
 
+      # Skill §2.3 要求提交前执行 ./gradlew testDebugUnitTest。
+      # 手机端无 JDK / Android SDK，本地无法完成，故在 CI 内执行同一任务，
+      # 失败即阻断后续出包，避免把未通过单测的代码打成 APK。
+      - name: Run Unit Tests
+        env:
+          TAIXU_DEV_BUILD: "1"
+        run: |
+          ./gradlew testDebugUnitTest --no-daemon --stacktrace
+
       - name: Build TaiXuDev APK
         env:
           TAIXU_DEV_BUILD: "1"
